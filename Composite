@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Composite
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Folder rootFolder = new Folder("Корневая папка"); 
+
+            Folder documentsFolder = new Folder("Документы");
+            Folder imagesFolder = new Folder("Изображения");
+
+            IFileSystemItem resume = new File("Резюме.docx");
+            IFileSystemItem photo = new File("Фото.jpg");
+            IFileSystemItem report = new File("Отчет.xlsx");
+            IFileSystemItem note = new File("Заметка.txt");
+
+            documentsFolder.Add(resume);
+            documentsFolder.Add(report);
+            imagesFolder.Add(photo);
+
+            rootFolder.Add(note);
+            rootFolder.Add(documentsFolder);
+            rootFolder.Add(imagesFolder);
+
+            rootFolder.Display(0);
+        }
+    }
+
+    public interface IFileSystemItem
+    {
+        void Display(int spaces);
+    }
+
+    public class File : IFileSystemItem
+    {
+        private string name;
+
+        public File(string name)
+        {
+            this.name = name;
+        }
+
+        public void Display(int spaces)
+        {
+            for (int i = 0; i < spaces; i++)
+            {
+                Console.Write("  ");
+            }
+            Console.WriteLine("Файл: " + name);
+        }
+    }
+
+    public class Folder : IFileSystemItem
+    {
+        private string name;
+        private List<IFileSystemItem> items = new List<IFileSystemItem>();
+
+        public Folder(string name)
+        {
+            this.name = name;
+        }
+
+        public void Add(IFileSystemItem component)
+        {
+            items.Add(component);
+        }
+
+        public void Remove(IFileSystemItem component)
+        {
+            items.Remove(component);
+        }
+
+        public void Display(int spaces)
+        {
+            for (int i = 0; i < spaces; i++)
+            {
+                Console.Write(" ");
+            }
+            Console.WriteLine($"Папка: {name}");
+            foreach (var item in items)
+            {
+                item.Display(spaces + 1);
+            }
+        }
+    }
+}
+//используется для организации иерархических структур данных, где отдельные объекты могут обрабатываться одинаково
