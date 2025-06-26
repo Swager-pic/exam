@@ -1,0 +1,54 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace prototype
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            ProcessNode processNode1 = new ProcessNode(1,2);
+            Console.WriteLine(processNode1);
+
+            ProcessNode processNode2 = processNode1.Clone();
+            Console.WriteLine(processNode2);
+
+            processNode2.Transitions = 21;
+
+            Console.WriteLine(processNode1);
+            Console.WriteLine(processNode2);
+        }
+    }
+
+    public interface IPrototype<T>
+    {
+        T Clone();
+    }
+
+    public class ProcessNode : IPrototype<ProcessNode>
+    {
+        public int Blocks { get; set; }
+        public int Transitions { get; set; }
+
+
+        public ProcessNode(int blocks, int transitions)
+        {
+            Blocks = blocks;
+            Transitions = transitions;
+        }
+
+        public override string ToString()
+        {
+            return $"Блоки: {Blocks}, Переходы {Transitions}";
+        }
+
+        public ProcessNode Clone()
+        {
+            return (ProcessNode)MemberwiseClone();
+        }
+    }
+    
+}
+//нужен для создания новых объектов путем клонирования уже существующих
