@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace facade
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Compiler compiler = new Compiler();
+            TestRunner testRunner = new TestRunner();
+            Packager packager = new Packager();
+            Deployer deployer = new Deployer();
+            var buildFacade = new BuildFacade(compiler, testRunner, packager, deployer);
+            buildFacade.Build();
+        }
+    }
+
+    public class Compiler
+    {
+        public void Compile()
+        {
+            Console.WriteLine("Компиляция кода...");
+        }
+    }
+
+    public class TestRunner
+    {
+        public void RunTests()
+        {
+            Console.WriteLine("Запуск тестов...");
+        }
+    }
+
+    public class Packager
+    {
+        public void CreatePackage()
+        {
+            Console.WriteLine("Создание пакета...");
+        }
+    }
+
+    public class Deployer
+    {
+        public void Deploy()
+        {
+            Console.WriteLine("Публикация пакета...");
+        }
+    }
+
+    public class BuildFacade
+    {
+        private Compiler _compiler;
+        private TestRunner _testRunner;
+        private Packager _packager;
+        private Deployer _deployer;
+
+        public BuildFacade(Compiler compiler, TestRunner testRunner, Packager packager, Deployer deployer)
+        {
+            this._compiler = compiler;
+            this._testRunner = testRunner;
+            this._packager = packager;
+            this._deployer = deployer;
+        }
+
+        public void Build() 
+        {
+            Console.WriteLine("Запуск программы");
+            _compiler.Compile();
+            _testRunner.RunTests();
+            _packager.CreatePackage();
+            _deployer.Deploy();
+            Console.WriteLine("Программа запущена!");
+        }
+    }
+}
+//предназначен для уменьшения количества зависимостей между клиентом и сложной системой
