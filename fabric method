@@ -1,0 +1,100 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace fabric_method
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Что вы хотите сделать:\n1.Написать жалобу\n2.Предложить что-либо\n3.Задать вопрос");
+            int choice = int.Parse(Console.ReadLine());
+            FeedbackFactory feedBack = null;
+
+            if (choice == 1)
+            {
+                feedBack = new ComplaintFeedBack();
+            }
+
+            if (choice == 2) 
+            {
+                feedBack = new SuggestionFeedBack();
+            }
+
+            if (choice == 3) 
+            { 
+                feedBack = new QuestionFeedBack();
+            }
+
+            feedBack.FeedbackHandler();
+        }
+    }
+
+    public abstract class SystemProcessing
+    {
+        public abstract void Processing();
+    }
+
+    public class Complaint : SystemProcessing
+    {
+        public override void Processing()
+        {
+            Console.WriteLine("Жалоба обработана");
+        }
+    }
+
+    public class Suggestion : SystemProcessing
+    {
+        public override void Processing()
+        {
+            Console.WriteLine("Предложение обработано");
+        }
+    }
+
+    public class Question : SystemProcessing
+    {
+        public override void Processing()
+        {
+            Console.WriteLine("Вопрос обработан");
+        }
+    }
+
+    public abstract class FeedbackFactory
+    {
+        public abstract SystemProcessing CreateProcessing();  
+
+        public void FeedbackHandler()
+        {
+            var feedBack = CreateProcessing();
+            feedBack.Processing();
+            Console.WriteLine("Спасибо за обратную связь");
+        }
+    }
+
+    public class QuestionFeedBack : FeedbackFactory
+    {
+        public override SystemProcessing CreateProcessing()
+        {
+            return new Question();
+        }
+    }
+
+    public class SuggestionFeedBack : FeedbackFactory
+    {
+        public override SystemProcessing CreateProcessing()
+        {
+            return new Suggestion();
+        }
+    }
+
+    public class ComplaintFeedBack : FeedbackFactory
+    {
+        public override SystemProcessing CreateProcessing()
+        {
+            return new Complaint();
+        }
+    }
+}
+//нужен для создания объектов, не указывая конкретные типы создаваемых объектов в коде, использующем их
