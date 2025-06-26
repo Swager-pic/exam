@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace bridge
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+{
+            ISender emailSender = new EmailSender();
+            ISender smsSender = new SmsSender();
+            ISender pushSender = new PushSender();
+
+            Notification regularNotification = new RegularNotification(emailSender);
+            regularNotification.Send("Сообщение при помощи EMail");
+
+            regularNotification = new RegularNotification(smsSender);
+            regularNotification.Send("Сообщение при помощи SMS");
+
+            Notification urgentNotification = new UrgentNotification(pushSender);
+            urgentNotification.Send("Срочно: требуется обновление");
+
+        }
+    }
+
+    public abstract class Notification
+    {
+        protected ISender _sender;
+
+        public Notification(ISender sender)
+        {
+            _sender = sender;
+        }
+
+        public abstract void Send(string message);
+    }
+
+    public interface ISender
+    {
+        void SendNotification(string message);
+    }
+
+    public class EmailSender : ISender
+    {
+        public void SendNotification(string message)
+        {
+            Console.WriteLine($"Отправлено Email: {message}");
+        }
+    }
+
+    public class SmsSender : ISender
+    {
+        public void SendNotification(string message)
+        {
+            Console.WriteLine($"Отправлено SMS: {message}");
+        }
+    }
+
+    public class PushSender : ISender
+    {
+        public void SendNotification(string message)
+        {
+            Console.WriteLine($"Отправлено Push: {message}");
+        }
+    }
+
+    public class RegularNotification : Notification
+    {
+        public RegularNotification(ISender sender) : base(sender) { }
+
+        public override void Send(string message)
+        {
+            Console.Write("Простые ");
+            _sender.SendNotification(message);
+        }
+    }
+
+    public class UrgentNotification : Notification
+    {
+        public UrgentNotification(ISender sender) : base(sender) { }
+
+        public override void Send(string message)
+        {
+            Console.Write("СРОЧНО ");
+        }
+    }
+}
+//нужен для разделения абстракции и реализации, чтобы они могли изменяться независимо друг от друга
