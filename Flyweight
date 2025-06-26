@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Flyweight
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            var textFragments = new List<TextFragment>();
+            var fontStyle1 = FontStyleFactory.GetFontStyle("Arial", 12, "Black");
+            var fontStyle2 = FontStyleFactory.GetFontStyle("Times New Roman", 14, "White");
+
+            for (int i = 0; i < 5; i++)
+            {
+                var fragment = new TextFragment($"Текст {i}", fontStyle1);
+                textFragments.Add(fragment);
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                var fragment = new TextFragment($"Текст {i}", fontStyle2);
+                textFragments.Add(fragment);
+            }
+
+            foreach (var fragment in textFragments)
+            {
+                fragment.Display();
+            }
+        }
+    }
+
+    public class FontStyle
+    {
+        public string Font { get; private set; }
+        public int Size { get; private set; }
+        public string Color { get; private set; }
+
+        public FontStyle(string font, int size, string color)
+        {
+            Font = font;
+            Size = size;
+            Color = color;
+        }
+
+        public void Display(string text)
+        {
+            Console.WriteLine($"Текст: '{text}' [Шрифт: {Font}, Размер: {Size}, Цвет: {Color}]");
+        }
+    }
+
+    public class TextFragment
+    {
+        private FontStyle _style;
+        private string _text;
+
+        public TextFragment(string text, FontStyle style)
+        {
+            _text = text;
+            _style = style;
+        }
+
+        public void Display()
+        {
+            _style.Display(_text);
+        }
+    }
+
+    public class FontStyleFactory
+    {
+        private static Dictionary<string, FontStyle> _fontStyles = new Dictionary<string, FontStyle>();
+
+        public static FontStyle GetFontStyle(string font, int size, string color)
+        {
+            string key = $"{font} {size} {color}";
+            if (!_fontStyles.ContainsKey(key))
+            {
+                FontStyle style = new FontStyle(font, size, color);
+                _fontStyles.Add(key, style);
+                Console.WriteLine($"Создан новый стиль шрифта: {key}");
+            }
+            return _fontStyles[key];
+        }
+    }
+}
+//нужен для оптимизации использования памяти при работе с большим количеством мелких, похожих объектов
