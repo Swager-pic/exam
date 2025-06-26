@@ -1,0 +1,64 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace adapter
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            OldLegacyBankAPI oldLegacyBankAPI = new OldLegacyBankAPI();
+
+            INewLegacyBankAPI adapter = new LegacyBankAPIAdapter(oldLegacyBankAPI);
+
+            NewLegacyBankAPI newLegacyBankAPI = new NewLegacyBankAPI(adapter);
+
+            newLegacyBankAPI.LegacyBankAPINew("User");
+        }
+    }
+
+    public class OldLegacyBankAPI
+    {
+        public void LegacyBankAPIOld(string account)
+        {
+            Console.WriteLine($"Выполнен перевод на {account}");
+        }
+    }
+    public interface INewLegacyBankAPI
+    {
+        void LegacyBankAPI(string account);
+    }
+
+    public class LegacyBankAPIAdapter : INewLegacyBankAPI
+    {
+        private OldLegacyBankAPI old;
+
+        public LegacyBankAPIAdapter(OldLegacyBankAPI oldBank)
+        {
+            old = oldBank;
+        }
+
+        public void LegacyBankAPI(string account)
+        {
+            old.LegacyBankAPIOld(account);
+        }
+    }
+
+    public class NewLegacyBankAPI
+    {
+        private INewLegacyBankAPI bank;
+
+        public NewLegacyBankAPI(INewLegacyBankAPI newBank)
+        {
+            bank = newBank;
+        }
+
+        public void LegacyBankAPINew(string account)
+        {
+            bank.LegacyBankAPI(account);
+        }
+    }
+}
+//Адаптер нужен для работы с несовместимыми интерфейсами
