@@ -1,0 +1,61 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace singleton
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            ConfigurationManager config1 = ConfigurationManager.GetConfigurationManager();
+            config1.ConfigValue = "Initial Config";
+            LoadConfig();
+            Console.WriteLine(config1.ConfigValue);
+
+            AppComponent component = new AppComponent();
+            component.UseConfig();
+            Console.WriteLine(config1.ConfigValue);
+        }
+
+        static void LoadConfig()
+        {
+            ConfigurationManager config2 = ConfigurationManager.GetConfigurationManager();
+            Console.WriteLine(config2.ConfigValue);
+            config2.ConfigValue += " Loaded";
+        }
+    }
+
+    public class AppComponent
+    {
+        public void UseConfig()
+        {
+            ConfigurationManager config0 = ConfigurationManager.GetConfigurationManager();
+            Console.WriteLine(config0.ConfigValue);
+            config0.ConfigValue += " Used";
+        }
+    }
+
+    public class ConfigurationManager
+    {
+        private static ConfigurationManager instance;
+
+        public string ConfigValue { get; set; }
+
+        private ConfigurationManager()
+        {
+            Console.WriteLine("Configuration Manager создан");  
+        }
+
+        public static ConfigurationManager GetConfigurationManager()
+        {
+            if (instance == null)
+            {
+                instance = new ConfigurationManager();
+            }
+            return instance;
+        }
+    }
+}
+//используется для обеспечения единственного экземпляра класса и предоставления глобальной точки доступа к этому экземпляру
