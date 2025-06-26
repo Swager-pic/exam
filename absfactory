@@ -1,0 +1,158 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Abs_factory
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Выберите платформу: \n1.Web\n2.Desktop");
+
+            int choice = int.Parse(Console.ReadLine());
+
+            IUIFactory factory = null;
+
+            if (choice == 1)
+            {
+                factory = new WebUIFactory();
+            }
+            else if (choice == 2) 
+            { 
+                factory = new DesktopUIFactory();
+            }
+
+            var user = new User(factory);
+            user.Start();
+        }
+
+        public interface IButton
+        {
+            void Describe();
+        }
+
+        public interface ITextBox
+        {
+            void Describe();
+        }
+
+        public interface ICheckBox
+        {
+            void Describe();
+        }
+
+        public class WebButton : IButton
+        {
+            public void Describe()
+            {
+                Console.WriteLine("Веб кнопка была создана");
+            }
+        }
+        public class WebTextBox : ITextBox
+        {
+            public void Describe()
+            {
+                Console.WriteLine("Поле ввода на веб платформе было создано");
+            }
+        }
+
+        public class WebCheckBox : ICheckBox
+        {
+            public void Describe()
+            {
+                Console.WriteLine("Веб флажок был создан");
+            }
+        }
+
+        public class DesktopButton : IButton
+        {
+            public void Describe()
+            {
+                Console.WriteLine("Кнопка была сгенерирована на рабочем столе");
+            }
+        }
+        public class DesktopTextBox : ITextBox
+        {
+            public void Describe()
+            {
+                Console.WriteLine("Поле ввода было сгенерировано на рабочем столе");
+            }
+        }
+
+        public class DesktopCheckBox : ICheckBox
+        {
+            public void Describe()
+            {
+                Console.WriteLine("Флажок был создан на рабочем столе");
+            }
+        }
+        public interface IUIFactory
+        {
+            IButton CreateButton();
+
+            ITextBox CreateTextBox();
+            ICheckBox CreateCheckBox();
+        }
+
+        public class WebUIFactory : IUIFactory
+        {
+            IButton IUIFactory.CreateButton()
+            {
+                return new WebButton();
+            }
+
+            ICheckBox IUIFactory.CreateCheckBox()
+            {
+                return new WebCheckBox();
+            }
+
+            ITextBox IUIFactory.CreateTextBox()
+            {
+                return new WebTextBox();
+            }
+        }
+
+        public class DesktopUIFactory : IUIFactory
+        {
+            IButton IUIFactory.CreateButton()
+            {
+                return new DesktopButton();
+            }
+
+            ICheckBox IUIFactory.CreateCheckBox()
+            {
+                return new DesktopCheckBox();
+            }
+
+            ITextBox IUIFactory.CreateTextBox()
+            {
+                return new DesktopTextBox();
+            }
+        }
+
+        public class User
+        {
+            private IButton button;
+            private ITextBox textBox;
+            private ICheckBox checkBox;
+
+            public User(IUIFactory factory)
+            {
+                button = factory.CreateButton();
+                textBox = factory.CreateTextBox();
+                checkBox = factory.CreateCheckBox();
+            }
+
+            public void Start()
+            {
+                Console.WriteLine("Добро пожаловать!");
+                button.Describe();
+                textBox.Describe();
+                checkBox.Describe();
+            }
+        }
+    }
+}
+//позволяет создавать семейства связанных объектов, не привязываясь к конкретным классам создаваемых объектов
